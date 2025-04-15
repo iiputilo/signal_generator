@@ -1,12 +1,13 @@
 cmake_minimum_required(VERSION 3.30)
 project(signal_generator)
 
-include_directories("C:/Users/xboxa/CLionProjects/signal_generator/fftw-3.3.5-dll64")
+include_directories("C:/Users/xboxa/CLionProjects/signal_generator/fftw-3.3.5-dll64"
+                    "C:/Users/xboxa/CLionProjects/signal_generator/libs")
 
 set(CMAKE_CXX_STANDARD 20)
 
 add_executable(signal_generator
-        graphic_drawer.cpp)
+        main.cpp)
 
 include(FetchContent)
 FetchContent_Declare(SFML

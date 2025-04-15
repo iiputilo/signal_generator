@@ -1,3 +1,4 @@
+#pragma once
 #include <iostream>
 #include <vector>
 #include <complex>
@@ -11,7 +12,7 @@ constexpr int FFT_SIZE = 1024;    // number of samples
 constexpr float SAMPLE_FREQUENCY = 48000.0f; // sample frequency
 
 // Function to generate a signal as a sum of harmonics
-void generateSignal(const vector<float>& freqs, const vector<float>& amps, vector<complex<float>>& signal) {
+inline void generateSignal(const vector<float>& freqs, const vector<float>& amps, vector<complex<float>>& signal) {
     for (int i = 0; i < FFT_SIZE; i++) {
         float t = i / SAMPLE_FREQUENCY;
         float sum = 0.0f;
@@ -24,7 +25,7 @@ void generateSignal(const vector<float>& freqs, const vector<float>& amps, vecto
 }
 
 // Function to compute the spectrum using FFTW
-void calculateSpectrum(vector<complex<float>>& signal) {
+inline void calculateSpectrum(vector<complex<float>>& signal) {
     fftwf_plan plan = fftwf_plan_dft_1d(FFT_SIZE,
                                         reinterpret_cast<fftwf_complex*>(signal.data()),
                                         reinterpret_cast<fftwf_complex*>(signal.data()),
@@ -33,7 +34,7 @@ void calculateSpectrum(vector<complex<float>>& signal) {
     fftwf_destroy_plan(plan);
 }
 
-int main() {
+inline int generate() {
     int numHarmonics;
     cout << "Enter the number of harmonics: ";
     cin >> numHarmonics;
@@ -76,5 +77,5 @@ int main() {
     spectrumFile.close();
 
     cout << "\nSignal data written to file signal.txt, spectrum to file spectrum.txt" << endl;
-    return 0;
+    return 1;
 }
