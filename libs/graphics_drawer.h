@@ -5,12 +5,17 @@
 #include <string>
 #include <limits>
 #include <optional>
+#include <filesystem>
+#include <iostream>
+#include <signal_generator.h>
 
+// Represents a point in 2D space
 struct Point {
     float x;
     float y;
 };
 
+// Reads data from a file and returns a vector of Point
 inline std::vector<Point> readData(const std::string &filename) {
     std::ifstream file(filename);
     std::vector<Point> data;
@@ -21,6 +26,7 @@ inline std::vector<Point> readData(const std::string &filename) {
     return data;
 }
 
+// Draws a graph based on the passed data
 inline void drawGraph(sf::RenderWindow &window, const std::vector<Point> &data, sf::Color color, bool invertY = false) {
     int windowWidth = window.getSize().x;
     int windowHeight = window.getSize().y;
@@ -29,6 +35,8 @@ inline void drawGraph(sf::RenderWindow &window, const std::vector<Point> &data, 
     float maxX = 0;
     float minY = std::numeric_limits<float>::max();
     float maxY = std::numeric_limits<float>::lowest();
+
+    // Determine min and max values for normalization
     for (const auto &p : data) {
         if (p.x < minX) minX = p.x;
         if (p.x > maxX) maxX = p.x;
@@ -36,18 +44,36 @@ inline void drawGraph(sf::RenderWindow &window, const std::vector<Point> &data, 
         if (p.y > maxY) maxY = p.y;
     }
 
+    // Create a vertex array to visualize data
     sf::VertexArray line(sf::PrimitiveType::LineStrip, data.size());
     for (size_t i = 0; i < data.size(); i++) {
         float tx = (data[i].x - minX) / (maxX - minX) * windowWidth;
         float ty = (data[i].y - minY) / (maxY - minY) * windowHeight;
-        if (invertY)
+        if (invertY) {
+            // Invert Y axis if needed
             ty = windowHeight - ty;
+        }
         line[i] = sf::Vertex(sf::Vector2f(tx, ty), color);
     }
     window.draw(line);
 }
 
+// Shows two windows with signal and spectrum graphs
 inline int showGraphics() {
+    // Check if files exist
+    if (!std::filesystem::exists("signal.txt") || !std::filesystem::exists("spectrum.txt")) {
+        std::cout << "Signal not found. Do you want to generate it?\n1. Yes\n2. Close the program\n\nYour choice-> ";
+        int choice;
+        std::cin >> choice;
+        if (choice == 1) {
+            std::cout << "\n\n\n";
+            generate();
+        } else {
+            std::cout << "Exiting program...\n";
+            return 0;
+        }
+    }
+
     // Read data from files
     std::vector<Point> signalData = readData("signal.txt");
     std::vector<Point> spectrumData = readData("spectrum.txt");

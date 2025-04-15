@@ -7,6 +7,7 @@ int main() {
 
     int userChoice;
     std::cin >> userChoice;
+    std::cout << "\n\n\n";
 
     switch (userChoice) {
         case 1: {
